@@ -1095,7 +1095,9 @@ class Renderer extends J3dThread {
 													jogl2es2Pipeline.bindToShadowDepthBuffer(canvas.ctx, light);
 
 										
-												
+													//TODO: the light should have a frustum near far and a bias figre, or the bias 
+													// uniform should be handed in based on near far?, no bias is about where in the depthi is all is
+													
 													
 													//TODO:canvas3d frustum are used by the rendermethod for culling
 													//TODO: dirty hack instead of setting the canvas to a no clip plane set
@@ -1108,6 +1110,8 @@ class Renderer extends J3dThread {
 													Transform3D lightLocation = new Transform3D();
 													// flip direction to position
 													Point3d eye = new Point3d(dlr.xformDirection);
+													//TODO: directional lights now need a proper positions so the frustm works properly, unless they always hover over the 
+													// viewport out at half the frustum size? the below puts them over 0,0 at 10 high
 													eye.scale(-10f);// used to flip dir if -1
 													Point3d center = new Point3d(0,0,0);
 													Vector3d up = new Vector3d(0, 0, -1);													

@@ -9042,12 +9042,18 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline {
 			gl.glBindTexture(GL.GL_TEXTURE_2D, light.shadowMapSamplerId);
 			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL2ES2.GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0,
 					GL2ES2.GL_DEPTH_COMPONENT, GL.GL_FLOAT, null);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
 			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL2ES2.GL_CLAMP_TO_BORDER);
 			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL2ES2.GL_CLAMP_TO_BORDER);
 			float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 			gl.glTexParameterfv(GL.GL_TEXTURE_2D, GL2ES2.GL_TEXTURE_BORDER_COLOR, borderColor, 0);
+			
+			// make it into a shadow map sampler (this require 3d coords in the texture func in the shader
+			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2ES2.GL_TEXTURE_COMPARE_MODE, GL2ES2.GL_COMPARE_REF_TO_TEXTURE);
+			//gl.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_COMPARE_FUNC, GL2.GL_GREATER);
+			
+			
 			//Generating the depth map shouldn't look too complicated. Because we only care about depth values we specify the texture's formats as GL_DEPTH_COMPONENT. 
 			//We also give the texture a width and height of 1024: this is the resolution of the depth map.
 			//With the generated depth texture we can attach it as the framebuffer's depth buffer:
