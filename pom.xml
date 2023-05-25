@@ -97,7 +97,7 @@
 	</scm>
 	
 	<properties>
-		<jogamp.version>2.3.2</jogamp.version>
+		<jogamp.version>2.4.0</jogamp.version>
 
 		<!-- NB: Token values for filtering VersionInfo.java. -->
 		<version_base>1.7.1</version_base>
