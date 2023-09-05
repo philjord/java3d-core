@@ -114,6 +114,11 @@ class JoglPipeline extends Pipeline {
     protected JoglPipeline() {
     	// https://bugs.openjdk.java.net/browse/JDK-8019274 fixed in Java 8 and the work around for mainThreadContext 
     	// causes WARNING: An illegal reflective access operation has occurred in Java 10
+    	
+    	
+    	// java 11 as well, but this check seems to have fixed that by only happening with java 7 or 8
+    	//https://forum.jogamp.org/JAVA-11-quot-illegal-reflective-access-quot-warning-td4039322.html#a4040393
+    	
     	// so this work around enabled on for java 7 or 8
     	int javaVersion = getVersion();
 		if(javaVersion == 7 || javaVersion ==8)
@@ -6352,6 +6357,7 @@ class JoglPipeline extends Pipeline {
 
     // Fix for Bug 983
     private void checkAppContext() {
+    	// this can only be non null on java version 7 or 8 as called in the constructor
         if (mainThreadContext == null)
             return;
 
@@ -8590,10 +8596,39 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     int getScreen(final GraphicsDevice graphicsDevice) {
         if (VERBOSE) System.err.println("JoglPipeline.getScreen()");
 
+        
+        // All of the Sun GraphicsDevice implementations have a method
+        //   int getScreen();
+        // which we want to call reflectively if it's available.
+    	
+    	/*https://forum.jogamp.org/Illegal-reflective-access-with-jogamp-java3d1-7-0-final-td4042358.html at the bottom I see 
+
+    	Note that running without "--add-opens java.desktop/sun.awt=ALL-UNNAMED" give the message
+
+    	WARNING: An illegal reflective access operation has occurred
+    	WARNING: Illegal reflective access by org.jogamp.java3d.JoglPipeline$1 (file:/usr/local/_jreality/j3dcore.jar) to method sun.awt.X11GraphicsDevice.getScreen()
+    	WARNING: Please consider reporting this to the maintainers of org.jogamp.java3d.JoglPipeline$1
+    	WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+    	WARNING: All illegal access operations will be denied in a future release
+    	X11Util.Display: Shutdown (JVM shutdown: true, open (no close attempt): 1/1, reusable (open, marked uncloseable): 0, pending (open in creation order): 1)
+    	X11Util: Open X11 Display Connections: 1
+    	X11Util: Open[0]: NamedX11Display[:0, 0x7fd5940351f0, refCount 1, unCloseable false] 
+    	   */ 	
+    	
+    	// windows uses this class 					sun.java2d.d3d.D3DGraphicsDevice extends sun.awt.Win32GraphicsDevice
+    	// sun.awt.Win32GraphicsDevice extends java.awt.GraphicsDevice and has a getScreen in it
+    	// Linux X11 tends to use this class     	sun.awt.X11GraphicsDevice    	
+    	// presumably X11GraphicsDevice extends something other than sun.awt.Win32GraphicsDevice but that has a getScreen
+    	
+    	// sun.java2d.d3d.D3DGraphicsDevice throws NoSuchMethodException (even though it's in the parent class)
+    	// this causes the default screenId of 0 to be handed back, which doesn't seem to cause trouble
+    	// presumably if a machine had 2 GPUs with different configs outputting to different screens that might be a hole
+    	
+        // disabled permanently, by leaving getScreenMethod == null
+        checkedForGetScreenMethod = true;
         if (!checkedForGetScreenMethod) {
-            // All of the Sun GraphicsDevice implementations have a method
-            //   int getScreen();
-            // which we want to call reflectively if it's available.
+            
+        	
             AccessController.doPrivileged(new PrivilegedAction<Object>() {
                 @Override
                 public Object run() {
@@ -8602,7 +8637,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
                         getScreenMethod.setAccessible(true);
                     } catch (Exception e) {
                     }
-                    checkedForGetScreenMethod = true;
+                    
                     return null;
                 }
             });

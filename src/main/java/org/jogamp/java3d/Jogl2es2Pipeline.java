@@ -33,7 +33,6 @@ import java.awt.GraphicsDevice;
 import java.awt.Window;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -41,8 +40,6 @@ import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8259,38 +8256,6 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline
 
 	private GLProfile profile;
 
-	private Object mainThreadContext; // Fix for Bug 983
-
-	// Fix for Bug 983
-	private void checkAppContext()
-	{
-		if (mainThreadContext == null)
-			return;
-
-		try
-		{
-			// Check by reflection that sun.awt.AppContext.getAppContext()
-			// doesn't return null
-			// (required by ImageIO.write() and other JMF internal calls) to
-			// apply workaround proposed at
-			// http://stackoverflow.com/questions/17223304/appcontext-is-null-from-rmi-thread-with-java-7-update-25
-			final Class<?> appContextClass = Class.forName("sun.awt.AppContext");
-			if (appContextClass.getMethod("getAppContext").invoke(null) == null)
-			{
-				final Field field = appContextClass.getDeclaredField("threadGroup2appContext");
-				field.setAccessible(true);
-				final Map threadGroup2appContext = (Map) field.get(null);
-				final ThreadGroup currentThreadGroup = Thread.currentThread().getThreadGroup();
-				threadGroup2appContext.put(currentThreadGroup, mainThreadContext);
-			}
-		}
-		catch (Throwable ex)
-		{
-			// Let's consider app context is not necessary for the program
-		}
-		// Don't need mainThreadContext anymore
-		mainThreadContext = null;
-	}
 
 	// This is the native method for creating the underlying graphics context.
 	@Override
@@ -8299,7 +8264,6 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline
 		if (VERBOSE)
 			System.err.println("JoglPipeline.createNewContext()");
 
-		checkAppContext();
 		GLDrawable glDrawable = null;
 		GLContext glContext = null;
 
@@ -9422,10 +9386,6 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline
 	{
 		if (VERBOSE)
 			System.err.println("JoglPipeline.getBestConfiguration()");
-		
-		//PJ this bug turns up in web start from 7u25 onwards, this fix should have been called from here from the beginning
-        // as getBestConfiguration calls new Component eventually where the bug surfaces
-        checkAppContext();
 
 		// Create a GLCapabilities based on the GraphicsConfigTemplate3D
 		final GLCapabilities caps = new GLCapabilities(profile);
@@ -9604,53 +9564,14 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline
 		return config;
 	}
 
-	private boolean checkedForGetScreenMethod = false;
-	private Method getScreenMethod = null;
-
 	@Override
 	// Screen3D class calls during init and that init is only called in the init
 	// of Canvas3D
-	// Notice this is using reflection on the GraphicsDevice!
+	// See JoglPipeline for info on why this is dummied off
 	int getScreen(final GraphicsDevice graphicsDevice)
 	{
 		if (VERBOSE)
 			System.err.println("JoglPipeline.getScreen()");
-
-		if (!checkedForGetScreenMethod)
-		{
-			// All of the Sun GraphicsDevice implementations have a method
-			// int getScreen();
-			// which we want to call reflectively if it's available.
-			AccessController.doPrivileged(new PrivilegedAction<Object>() {
-				@Override
-				public Object run()
-				{
-					try
-					{
-						getScreenMethod = graphicsDevice.getClass().getDeclaredMethod("getScreen", new Class[] {});
-						getScreenMethod.setAccessible(true);
-					}
-					catch (Exception e)
-					{
-					}
-					checkedForGetScreenMethod = true;
-					return null;
-				}
-			});
-		}
-
-		if (getScreenMethod != null)
-		{
-			try
-			{
-				return ((Integer) getScreenMethod.invoke(graphicsDevice, (Object[]) null)).intValue();
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException(e);
-			}
-		}
-
 		return 0;
 	}
 

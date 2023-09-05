@@ -4,7 +4,7 @@
 
 	<groupId>org.jogamp.java3d</groupId>
 	<artifactId>java3d-core</artifactId>
-	<version>1.7.1</version>
+	<version>1.7.2</version>
 
 	<name>Java 3D Core</name>
 	<description>3D Graphics API for the Java Platform</description>
@@ -97,10 +97,10 @@
 	</scm>
 	
 	<properties>
-		<jogamp.version>2.4.0</jogamp.version>
+		<jogamp.version>2.5.0</jogamp.version>
 
 		<!-- NB: Token values for filtering VersionInfo.java. -->
-		<version_base>1.7.1</version_base>
+		<version_base>1.7.2</version_base>
 		<build.spec.title>${project.name}</build.spec.title>
 		<build.spec.vendor></build.spec.vendor>
 		<build.impl.title>${project.name}</build.impl.title>
@@ -283,94 +283,6 @@
 					</plugins>
 				</pluginManagement>
 			</build>
-		</profile>
-		
-		<!-- This profile enables releasing to the OSS Sonatype repository. -->
-		<profile>
-			<id>sonatype-oss-release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.sonatype.plugins</groupId>
-						<artifactId>nexus-staging-maven-plugin</artifactId>
-						<version>1.6.7</version>
-						<extensions>true</extensions>
-						<configuration>
-							<serverId>sonatype-nexus-releases</serverId>
-							<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-							<autoReleaseAfterClose>true</autoReleaseAfterClose>
-							<stagingProgressTimeoutMinutes>15</stagingProgressTimeoutMinutes>
-							<stagingProgressPauseDurationSeconds>12</stagingProgressPauseDurationSeconds>
-							<!--
-							By having no explicit stagingProfileId, we use
-							Staging V2 in "auto" mode, profile will be
-							matched server side
-							-->
-						</configuration>
-					</plugin>
-					<plugin>
-						<inherited>true</inherited>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-deploy-plugin</artifactId>
-						<version>2.8.2</version>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-gpg-plugin</artifactId>
-						<version>1.5</version>
-						<executions>
-							<execution>
-								<id>sign-artifacts</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>sign</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<useAgent>true</useAgent>
-						</configuration>
-					</plugin>
-					<plugin>
-						<artifactId>maven-release-plugin</artifactId>
-						<version>2.5.3</version>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-source-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>3.1.1</version>
-						<configuration>
-							<additionalJOption>-Xdoclint:none</additionalJOption>
-							<links>
-								<link>http://docs.oracle.com/javase/8/docs/api/</link>
-							</links>
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>		
+		</profile>			
 	</profiles>
 </project>
