@@ -11,37 +11,18 @@ The source code license information for this project is in LICENSE.txt
 Additional information and license restrictions for third party source
 code are found in the THIRDPARTY-LICENSE-*.txt files.
 
-## Building Java3D
+## Including Java3D
 
-The instructions below are based on eclipse, however they should work on most common IDE's
+Java3D 1.7.2 is now mavenised on Maven Central just include a dependency in your pom.xml like so
 
-Clone the repo using 
-https://github.com/philjord/java3d-core.git
-Make note of the root folder you use  
-Right click on the Project Explorer view and select Import  
-Expand the Maven group and select Existing Maven Project and click Next  
-For Root directory click Browse and find the root folder that you cloned the repo into  
-There should be a pom.xml that is ticked in the Projects area  
-Click Finish  
-Repeat for java3d-utils using  
-https://github.com/philjord/java3d-utils.git  
-Repeat for vecmath using  
-https://github.com/philjord/vecmath.git  
-
-Once that's done it's likely you'll need to  
-Right click on pom.xml -> Run As -> Maven clean  
-then  
-Right click on pom.xml -> Run As -> Maven generate sources  
-This should place a derived version of VersionInfo.java into /java3d-core/target/generated-sources/java-templates
-
-
-If you are new to Java3D then it might be good to repeat the clone import step for java3d-examples too, using
-https://github.com/philjord/java3d-examples.git 
-
-Now if you right click on  
-org.jdesktop.j3d.examples.hello_universe.HelloUniverse.java  
-Run as ... Java Application  
-You should see Java3D working  
+	<dependencies>	
+		<dependency>		
+			<groupId>org.jogamp.java3d</groupId>			
+			<artifactId>java3d-core</artifactId>			
+			<version>1.7.2</version>			
+		</dependency>		
+		...	
+	</dependencies> 
 
 ## Documentation  
 
