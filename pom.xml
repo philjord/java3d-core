@@ -8,6 +8,7 @@
 
 	<name>Java 3D Core</name>
 	<description>3D Graphics API for the Java Platform</description>
+	<url>https://jogamp.org</url>
 
 	<licenses>
 		<license>
@@ -219,7 +220,7 @@
 				<configuration>
 					<sourceDirectory>${basedir}/src/main/java-templates</sourceDirectory>
 				</configuration>
-			</plugin>
+			</plugin>			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
