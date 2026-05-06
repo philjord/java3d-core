@@ -415,6 +415,11 @@ abstract class Pipeline {
 
     // ShaderAttributeValue methods
 
+    abstract ShaderError setGLSLUniform1b(Context ctx,
+              ShaderProgramId shaderProgramId,
+              ShaderAttrLoc uniformLocation,
+              boolean value);
+    
     abstract ShaderError setGLSLUniform1i(Context ctx,
             ShaderProgramId shaderProgramId,
             ShaderAttrLoc uniformLocation,
@@ -466,7 +471,12 @@ abstract class Pipeline {
             float[] value);
 
     // ShaderAttributeArray methods
-
+    abstract ShaderError setGLSLUniform1bArray(Context ctx,
+           ShaderProgramId shaderProgramId,
+           ShaderAttrLoc uniformLocation,
+           int numElements,
+           boolean[] value);
+    
     abstract ShaderError setGLSLUniform1iArray(Context ctx,
             ShaderProgramId shaderProgramId,
             ShaderAttrLoc uniformLocation,

@@ -2834,7 +2834,17 @@ class JoglPipeline extends Pipeline {
     //
 
     // ShaderAttributeValue methods
-
+    @Override
+    ShaderError setGLSLUniform1b(Context ctx,
+            ShaderProgramId shaderProgramId,
+            ShaderAttrLoc uniformLocation,
+            boolean value) {
+        if (VERBOSE) System.err.println("JoglPipeline.setGLSLUniform1i()");
+		GL2 gl = context(ctx).getGL().getGL2();
+		gl.glUniform1iARB(unbox(uniformLocation), (value?1:0));
+        return null;
+    }
+    
     @Override
     ShaderError setGLSLUniform1i(Context ctx,
             ShaderProgramId shaderProgramId,
@@ -2959,7 +2969,23 @@ class JoglPipeline extends Pipeline {
     }
 
     // ShaderAttributeArray methods
-
+    @Override
+    ShaderError setGLSLUniform1bArray(Context ctx,
+            ShaderProgramId shaderProgramId,
+            ShaderAttrLoc uniformLocation,
+            int numElements,
+            boolean[] value) {
+        if (VERBOSE) System.err.println("JoglPipeline.setGLSLUniform1iArray()");
+        
+        int[] vals = new int[value.length];
+		for (int i = 0; i < value.length; i++)
+			vals [i] = value [i] ? 1 : 0;
+		
+		GL2 gl = context(ctx).getGL().getGL2();
+		gl.glUniform1ivARB(unbox(uniformLocation), numElements, vals, 0);
+        return null;
+    }
+    
     @Override
     ShaderError setGLSLUniform1iArray(Context ctx,
             ShaderProgramId shaderProgramId,
@@ -3339,7 +3365,9 @@ class JoglPipeline extends Pipeline {
     private int glslToJ3dType(int type) {
         switch (type) {
             case GL2.GL_BOOL_ARB:
+            	 return ShaderAttributeObjectRetained.TYPE_BOOL;
             case GL2.GL_INT:
+            	return ShaderAttributeObjectRetained.TYPE_INTEGER;
             case GL2.GL_SAMPLER_2D_ARB:
             case GL2.GL_SAMPLER_3D_ARB:
             case GL2.GL_SAMPLER_CUBE_ARB:

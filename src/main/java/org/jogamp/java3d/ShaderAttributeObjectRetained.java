@@ -189,16 +189,17 @@ abstract class ShaderAttributeObjectRetained extends ShaderAttributeRetained {
     // the tables of classes, so the values must start at 0 and
     // increment by 1. Also, the order must be the same as the order
     // of the entries in each of the two class tables.
-    static final int TYPE_INTEGER  =  0;
-    static final int TYPE_FLOAT    =  1;
-    static final int TYPE_TUPLE2I  =  2;
-    static final int TYPE_TUPLE2F  =  3;
-    static final int TYPE_TUPLE3I  =  4;
-    static final int TYPE_TUPLE3F  =  5;
-    static final int TYPE_TUPLE4I  =  6;
-    static final int TYPE_TUPLE4F  =  7;
-    static final int TYPE_MATRIX3F =  8;
-    static final int TYPE_MATRIX4F =  9;
+    static final int TYPE_BOOL	   =  0;
+    static final int TYPE_INTEGER  =  1;
+    static final int TYPE_FLOAT    =  2;
+    static final int TYPE_TUPLE2I  =  3;
+    static final int TYPE_TUPLE2F  =  4;
+    static final int TYPE_TUPLE3I  =  5;
+    static final int TYPE_TUPLE3F  =  6;
+    static final int TYPE_TUPLE4I  =  7;
+    static final int TYPE_TUPLE4F  =  8;
+    static final int TYPE_MATRIX3F =  9;
+    static final int TYPE_MATRIX4F =  10;
 
     // Double-precision is not supported in the current version. Uncomment the
     // following if future support is done.
@@ -210,6 +211,7 @@ abstract class ShaderAttributeObjectRetained extends ShaderAttributeRetained {
 //    static final int TYPE_MATRIX4D = 15;
 
     static final Class classTable[] = {
+    Boolean.class,
 	Integer.class,
 	Float.class,
 	Tuple2i.class,
@@ -232,6 +234,7 @@ abstract class ShaderAttributeObjectRetained extends ShaderAttributeRetained {
     };
 
     static final Class classTableArr[] = {
+    Boolean[].class,
 	Integer[].class,
 	Float[].class,
 	Tuple2i[].class,

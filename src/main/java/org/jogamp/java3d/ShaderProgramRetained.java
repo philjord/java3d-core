@@ -290,7 +290,9 @@ abstract class ShaderProgramRetained extends NodeComponentRetained
 	abstract ShaderError disableShaderProgram(Context ctx);
 
 	// ShaderAttributeValue methods
-
+	
+	abstract ShaderError setUniform1b(Context ctx, ShaderProgramId shaderProgramId, ShaderAttrLoc uniformLocation, boolean value);
+	
 	abstract ShaderError setUniform1i(Context ctx, ShaderProgramId shaderProgramId, ShaderAttrLoc uniformLocation, int value);
 
 	abstract ShaderError setUniform1f(Context ctx, ShaderProgramId shaderProgramId, ShaderAttrLoc uniformLocation, float value);
@@ -313,6 +315,9 @@ abstract class ShaderProgramRetained extends NodeComponentRetained
 
 	// ShaderAttributeArray methods
 
+	abstract ShaderError setUniform1bArray(Context ctx, ShaderProgramId shaderProgramId, ShaderAttrLoc uniformLocation, int numElements,
+	                                       boolean[] value);
+	
 	abstract ShaderError setUniform1iArray(Context ctx, ShaderProgramId shaderProgramId, ShaderAttrLoc uniformLocation, int numElements,
 			int[] value);
 
@@ -991,40 +996,43 @@ abstract class ShaderProgramRetained extends NodeComponentRetained
 
 		switch (sav.getClassType())
 		{
-		case ShaderAttributeObjectRetained.TYPE_INTEGER:
-			return setUniform1i(ctx, shaderProgramId, loc, ((int[]) sav.attrWrapper.getRef())[0]);
-
-		case ShaderAttributeObjectRetained.TYPE_FLOAT:
-			return setUniform1f(ctx, shaderProgramId, loc, ((float[]) sav.attrWrapper.getRef())[0]);
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE2I:
-			return setUniform2i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE2F:
-			return setUniform2f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE3I:
-			return setUniform3i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE3F:
-			return setUniform3f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE4I:
-			return setUniform4i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_TUPLE4F:
-			return setUniform4f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_MATRIX3F:
-			return setUniformMatrix3f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
-
-		case ShaderAttributeObjectRetained.TYPE_MATRIX4F:
-			return setUniformMatrix4f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
-
-		default:
-			// Should never get here
-			assert false : "Unrecognized ShaderAttributeValue classType";
-			return null;
+			case ShaderAttributeObjectRetained.TYPE_BOOL:
+				return setUniform1b(ctx, shaderProgramId, loc, ((boolean[]) sav.attrWrapper.getRef())[0]);
+				
+			case ShaderAttributeObjectRetained.TYPE_INTEGER:
+				return setUniform1i(ctx, shaderProgramId, loc, ((int[]) sav.attrWrapper.getRef())[0]);
+	
+			case ShaderAttributeObjectRetained.TYPE_FLOAT:
+				return setUniform1f(ctx, shaderProgramId, loc, ((float[]) sav.attrWrapper.getRef())[0]);
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE2I:
+				return setUniform2i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE2F:
+				return setUniform2f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE3I:
+				return setUniform3i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE3F:
+				return setUniform3f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE4I:
+				return setUniform4i(ctx, shaderProgramId, loc, (int[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_TUPLE4F:
+				return setUniform4f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_MATRIX3F:
+				return setUniformMatrix3f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
+	
+			case ShaderAttributeObjectRetained.TYPE_MATRIX4F:
+				return setUniformMatrix4f(ctx, shaderProgramId, loc, (float[]) sav.attrWrapper.getRef());
+	
+			default:
+				// Should never get here
+				assert false : "Unrecognized ShaderAttributeValue classType";
+				return null;
 		}
 	}
 
@@ -1036,6 +1044,9 @@ abstract class ShaderProgramRetained extends NodeComponentRetained
 
 		switch (saa.getClassType())
 		{
+		case ShaderAttributeObjectRetained.TYPE_BOOL:
+			return setUniform1bArray(ctx, shaderProgramId, loc, saa.length(), ((boolean[]) saa.attrWrapper.getRef()));
+				
 		case ShaderAttributeObjectRetained.TYPE_INTEGER:
 			return setUniform1iArray(ctx, shaderProgramId, loc, saa.length(), ((int[]) saa.attrWrapper.getRef()));
 

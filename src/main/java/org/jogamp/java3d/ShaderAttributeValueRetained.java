@@ -101,6 +101,9 @@ class ShaderAttributeValueRetained extends ShaderAttributeObjectRetained {
     AttrWrapper createAttrWrapper(Object value, int classType) {
 	ValueWrapper attrWrapper = null;
 	switch (classType) {
+	case TYPE_BOOL:
+		 attrWrapper = new BooleanWrapper();
+		 break;
 	case TYPE_INTEGER:
 	    attrWrapper = new IntegerWrapper();
 	    break;
@@ -169,7 +172,27 @@ class ShaderAttributeValueRetained extends ShaderAttributeObjectRetained {
     static abstract class ValueWrapper extends AttrWrapper {
 	// No additional fields or methods are defined in this class
     }
+    
+    // Wrapper class for Boolean
+    static class BooleanWrapper extends ValueWrapper {
+	private boolean[] value = new boolean[1];
 
+	@Override
+	void set(Object value) {
+	    this.value[0] = ((Boolean)value).booleanValue();
+	}
+
+	@Override
+	Object get() {
+	    return new Boolean(this.value[0]);
+	}
+
+	@Override
+	Object getRef() {
+	    return this.value;
+	}
+    }
+    
     // Wrapper class for Integer
     static class IntegerWrapper extends ValueWrapper {
 	private int[] value = new int[1];

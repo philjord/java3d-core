@@ -52,6 +52,18 @@ class GLSLShaderProgramRetained extends ShaderProgramRetained {
     }
 
     // ShaderAttributeValue methods
+    
+    @Override
+    ShaderError setUniform1b(Context ctx,
+            ShaderProgramId shaderProgramId,
+            ShaderAttrLoc uniformLocation,
+            boolean value) {
+
+        return Pipeline.getPipeline().setGLSLUniform1b(ctx,
+                shaderProgramId,
+                uniformLocation,
+                value);
+    }
 
     @Override
     ShaderError setUniform1i(Context ctx,
@@ -174,7 +186,20 @@ class GLSLShaderProgramRetained extends ShaderProgramRetained {
     }
 
     // ShaderAttributeArray methods
+    @Override
+    ShaderError setUniform1bArray(Context ctx,
+            ShaderProgramId shaderProgramId,
+            ShaderAttrLoc uniformLocation,
+            int numElements,
+            boolean[] value) {
 
+        return Pipeline.getPipeline().setGLSLUniform1bArray(ctx,
+                shaderProgramId,
+                uniformLocation,
+                numElements,
+                value);
+    }
+    
     @Override
     ShaderError setUniform1iArray(Context ctx,
             ShaderProgramId shaderProgramId,

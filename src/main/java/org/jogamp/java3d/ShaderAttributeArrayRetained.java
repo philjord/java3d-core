@@ -156,6 +156,9 @@ class ShaderAttributeArrayRetained extends ShaderAttributeObjectRetained {
     AttrWrapper createAttrWrapper(Object value, int classType) {
 	ArrayWrapper attrWrapper = null;
 	switch (classType) {
+	case TYPE_BOOL:
+		attrWrapper = new BooleanArrayWrapper();
+		break;
 	case TYPE_INTEGER:
 	    attrWrapper = new IntegerArrayWrapper();
 	    break;
@@ -238,7 +241,43 @@ class ShaderAttributeArrayRetained extends ShaderAttributeObjectRetained {
 	 */
 	abstract void set(int index, Object value);
     }
+    
+    // Wrapper class for Boolean
+    static class BooleanArrayWrapper extends ArrayWrapper {
+	private boolean[] value = new boolean[0];
 
+	@Override
+	void set(Object value) {
+	    Boolean[] arr = (Boolean[])value;
+	    if (this.length != arr.length) {
+		this.length = arr.length;
+		this.value = new boolean[this.length];
+	    }
+	    for (int i = 0; i < this.length; i++) {
+		this.value[i] = arr[i].booleanValue();
+	    }
+	}
+
+	@Override
+	void set(int index, Object value) {
+	    this.value[index] = ((Boolean)value).booleanValue();
+	}
+
+	@Override
+	Object get() {
+		Boolean[] arr = new Boolean[this.length];
+	    for (int i = 0; i < this.length; i++) {
+		arr[i] = new Boolean(this.value[i]);
+	    }
+	    return arr;
+	}
+
+	@Override
+	Object getRef() {
+	    return this.value;
+	}
+    }
+    
     // Wrapper class for Integer
     static class IntegerArrayWrapper extends ArrayWrapper {
 	private int[] value = new int[0];
