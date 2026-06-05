@@ -45,6 +45,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
+import org.jogamp.java3d.ImageComponentRetained.ImageFormatType;
+
 
 /**
  * Abstract class that is used to define 2D or 3D ImageComponent classes
@@ -65,6 +67,7 @@ abstract class ImageComponentRetained extends NodeComponentRetained {
     static final int TYPE_BYTE_RGBA    =  0x8;
     static final int TYPE_BYTE_LA      =  0x10;
     static final int TYPE_BYTE_GRAY    =  0x20;
+    static final int TYPE_BYTE_RG      =  0x400;
     static final int TYPE_USHORT_GRAY  =  0x40;
     static final int TYPE_INT_BGR      =  0x80;
     static final int TYPE_INT_RGB      =  0x100;
@@ -80,6 +83,7 @@ abstract class ImageComponentRetained extends NodeComponentRetained {
         TYPE_BYTE_RGBA,
         TYPE_BYTE_LA,
         TYPE_BYTE_GRAY,
+        TYPE_BYTE_RG,
         TYPE_USHORT_GRAY,
         TYPE_INT_BGR,
         TYPE_INT_RGB,
@@ -287,6 +291,9 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
                 break;
             case TYPE_BYTE_GRAY:
                 iftValue = TYPE_BYTE_GRAY;
+                break;
+            case TYPE_BYTE_RG:
+            	iftValue = TYPE_BYTE_RG;
                 break;
             case TYPE_USHORT_GRAY:
                 iftValue = TYPE_USHORT_GRAY;
@@ -678,7 +685,13 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
                 break;
 
             case 2:
-                throw new IllegalArgumentException(J3dI18N.getString("ImageComponent5"));
+            	if(nioImageType == NioImageBuffer.ImageType.TYPE_BYTE_RG) {
+                    imageFormatType = ImageFormatType.TYPE_BYTE_RG;
+                    unitsPerPixel = 2;
+                } else {
+                    throw new IllegalArgumentException(J3dI18N.getString("ImageComponent5"));
+                }
+                break;
             case 1:
                 if(nioImageType == NioImageBuffer.ImageType.TYPE_BYTE_GRAY) {
                     imageFormatType = ImageFormatType.TYPE_BYTE_GRAY;
@@ -790,6 +803,7 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
 
         switch(imageFormatType) {
             case TYPE_BYTE_GRAY:
+            case TYPE_BYTE_RG:
             case TYPE_BYTE_LA:
             case TYPE_BYTE_RGB:
             case TYPE_BYTE_BGR:
@@ -823,6 +837,7 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
     ImageData createRenderedImageDataObject(RenderedImage byRefImage, int dataWidth, int dataHeight) {
         switch(imageFormatType) {
             case TYPE_BYTE_GRAY:
+            case TYPE_BYTE_RG:
             case TYPE_BYTE_LA:
             case TYPE_BYTE_RGB:
             case TYPE_BYTE_BGR:
@@ -2549,9 +2564,12 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
                     case TYPE_BYTE_LA:
                         bufferType = BufferedImage.TYPE_4BYTE_ABGR;
                         break;
+                    case TYPE_BYTE_RG: // This is a special case. Need to handle separately.
+                        bufferType = BufferedImage.TYPE_4BYTE_ABGR;
+                        break;
                     case TYPE_BYTE_GRAY:
                         bufferType = BufferedImage.TYPE_BYTE_GRAY;
-                        break;
+                        break;                   
                     case TYPE_INT_BGR:
                         bufferType = BufferedImage.TYPE_INT_BGR;
                         break;
@@ -2570,7 +2588,7 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
                 }
 
                 BufferedImage bi = new BufferedImage(width, height, bufferType);
-                if((!swapNeeded) && (imageFormatType != ImageFormatType.TYPE_BYTE_LA)) {
+                if((!swapNeeded) && (imageFormatType != ImageFormatType.TYPE_BYTE_LA && imageFormatType != ImageFormatType.TYPE_BYTE_RG)) {
                     if(yUp) {
                         copyByBlock(bi, depthIndex);
                     } else {
@@ -2578,7 +2596,7 @@ private ArrayList<NodeComponentRetained> userList = new ArrayList<NodeComponentR
                     }
                 } else if(swapNeeded) {
                     copyByLine(bi, depthIndex, swapNeeded);
-                } else if(imageFormatType == ImageFormatType.TYPE_BYTE_LA) {
+                } else if(imageFormatType == ImageFormatType.TYPE_BYTE_LA || imageFormatType == ImageFormatType.TYPE_BYTE_RG) {
                     copyByLineAndExpand(bi, depthIndex);
                 } else {
                     assert false;

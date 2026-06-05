@@ -87,6 +87,14 @@ public class NioImageBuffer {
          * The data buffer must be a ByteBuffer when using this imageType.
          */
         TYPE_BYTE_GRAY,
+        
+        /**
+         * Represents an image with 8-bit RG color components,  with the
+         * colors Green, and Red stored in 2 consecutive
+         * bytes for each pixel.
+         * The data buffer must be a ByteBuffer when using this imageType.
+         */
+        TYPE_BYTE_RG,
 
         /**
          * Represents an image with 8-bit RGBA color components packed
@@ -110,6 +118,8 @@ public class NioImageBuffer {
          * The data buffer must be an IntBuffer when using this imageType.
          */
         TYPE_INT_RGB,
+       
+
 
     }
 
@@ -371,7 +381,13 @@ public class NioImageBuffer {
                 bytesPerPixel = 1;
                 elementsPerPixel = 1;
                 break;
-
+                
+            case TYPE_BYTE_RG:
+                bufferType = BufferType.BYTE_BUFFER;
+                bytesPerPixel = 2;
+                elementsPerPixel = 2;
+                break;
+                
             case TYPE_INT_ARGB:
             case TYPE_INT_BGR:
             case TYPE_INT_RGB:
