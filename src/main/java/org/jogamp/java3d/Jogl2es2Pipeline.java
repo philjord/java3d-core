@@ -5252,17 +5252,16 @@ class Jogl2es2Pipeline extends Jogl2es2DEPPipeline
 		joglesctx.pointSize = pointSize;
 
 		// one time enable call
-		if (!pointsEnabled)
+		if (!joglesctx.pointsEnabled)
 		{
 			GL2ES2 gl = ((Jogl2es2Context) ctx).gl2es2();
 			// bug in desktop requiring this to be set still
 			gl.glEnable(0x8642);// GL_VERTEX_PROGRAM_POINT_SIZE
 			gl.glEnable(34913);// GL.GL_POINT_SPRITE);
-			pointsEnabled = true;
+			joglesctx.pointsEnabled = true;
 		}
 	}
 
-	private boolean pointsEnabled = false;
 
 	// native method for setting default PointAttributes
 	@Override

@@ -149,6 +149,8 @@ public class Jogl2es2Context extends JoglContext
 
 	public float pointSize = 0;
 
+	public boolean pointsEnabled = false;
+	
 	public int polygonMode = PolygonAttributes.POLYGON_FILL;
 
 	public static class RenderingData
